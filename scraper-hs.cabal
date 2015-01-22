@@ -1,0 +1,28 @@
+name:               scraper-hs
+version:            1.0
+build-type:         Simple
+cabal-version:      >= 1.20
+
+executable scraper-hs
+  main-is:            Main.hs
+  default-language:   Haskell2010
+  default-extensions: DataKinds,
+                      DeriveGeneric,
+                      OverloadedStrings,
+                      TypeFamilies,
+                      TypeOperators
+  ghc-options:        -O2 -Wall -threaded -rtsopts
+  build-depends:      base,
+                      aeson,
+                      servant,
+                      servant-server,
+                      stm,
+                      text,
+                      transformers,
+                      warp,
+                      scotty,
+                      hxt,
+                      http-conduit,
+                      containers,
+                      parallel-io,
+                      bytestring

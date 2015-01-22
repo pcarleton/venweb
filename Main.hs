@@ -6,9 +6,17 @@ import Data.Maybe
 import Text.XML.HXT.Core
 import qualified Network.HTTP.Conduit as C
 import Data.Char (chr)
+import Control.Monad.IO.Class
+
+import Control.Concurrent.ParallelIO (parallel, stopGlobalPool)
 
 import Data.Map (Map)
 import qualified Data.Map as Map 
+
+import Web.Scotty
+import System.Environment
+
+import Data.Monoid (mconcat)
 
 import Data.List
 import Data.Maybe
@@ -68,7 +76,7 @@ friends f = f >>> css "div" >>>  hasAttrValue "class" ("friend-list" ==)
 
 
 getConns dest = do
-    putStrLn $ "Getting :" ++ dest
+    --putStrLn $ "Getting :" ++ dest
     page <- fromWeb ("https://venmo.com" ++ dest)
     runX . payments $ page
 
@@ -82,27 +90,31 @@ insertLinks f b a = do
     return $ Map.insert a res b
 
 
-im :: String -> CMap -> IO CMap
+im :: CMap -> String -> IO CMap
 
-im a b = if Map.member a b then return b
+im b a = if Map.member a b then return b
         else insertLinks getConns b a
 
 
+keySet :: CMap -> Set String
+keySet m = Set.fromList $ Map.keys m
+
 getWeb :: Int -> [String] -> CMap -> IO CMap
 
-getWeb mx [] b = return b
-getWeb mx (x:xs) b = --return b
-    let nm = im x b in
-        if length (Map.keys b) > mx then
-        do
-            nm <- im x b
-            -- ms <- (Map.findWithDefault [] x) =<< nm
-            getWeb mx (xs) nm
+getWeb _ [] b = return b
+getWeb mx xs b = --return b
+        if length (Map.keys b) > mx then return b
         else 
+        let linkMapIOs = parallel $ map (im Map.empty) xs
+            lookup = flip $ Map.findWithDefault []
+        in 
         do
-            nm <- im x b
+            nms <- linkMapIOs
+            newMap <- return $ foldl Map.union b nms
+            qs <- return . concat $ map (lookup newMap) xs
             -- ms <- (Map.findWithDefault [] x) =<< nm
-            getWeb mx (xs ++ Map.findWithDefault [] x nm) nm
+            newSet <- return $ Set.toList $ Set.difference (Set.fromList qs) (Set.fromList xs)
+            getWeb mx newSet newMap
 
 
 mergeNLs :: NL -> NL -> NL
@@ -119,9 +131,6 @@ getNodeLinks sts =
 
 decon :: CMap -> NL
 decon m = foldl mergeNLs (Set.empty, Set.empty) $ map getNodeLinks (Map.toList m)
-
-
-result <- getWeb 1 ["/Paul-Carleton"] Map.empty
 
 
 extractGraph :: CMap -> Graph
@@ -141,7 +150,16 @@ graphForUser u deg =
     let result = getWeb deg ["/" ++ u] Map.empty
     in fmap  extractGraph result
 
-
+main :: IO ()
+main = do
+  env <- getEnvironment
+  let port = maybe 8080 read $ lookup "PORT" env
+  scotty port $ do
+    get "/:word" $ do
+      beam <- param "word"
+      graph <- liftIO $ graphForUser beam 10
+      liftIO stopGlobalPool
+      json graph
 
 
 

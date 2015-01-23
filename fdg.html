@@ -19,8 +19,13 @@
 }
 
 </style>
-<style type="text/css"></style></head><body>
-<script src="./fdg_files/d3.v3.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<style type="text/css"></style></head>
+<body>
+<form action="/">
+<input name="uname" type="text" value="Input venmo user name" />
+<input type="submit" value="Get graph!" />
+</form>
 <script>
 
 var width = 960,
@@ -37,7 +42,13 @@ var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-d3.json("miserables4.json", function(error, graph) {
+var query = window.location.search.substring(1);
+var pieces = query.split("=");
+
+if (pieces.length > 1) {
+var name = pieces[1];
+
+d3.json("/nodes/" + name, function(error, graph) {
   force
       .nodes(graph.nodes)
       .links(graph.links)
@@ -83,6 +94,6 @@ d3.json("miserables4.json", function(error, graph) {
 		 .attr("y", function(d) { return d.y;});
   });
 });
-
+}
 </script>
 </body></html>

@@ -155,11 +155,12 @@ main = do
   env <- getEnvironment
   let port = maybe 8080 read $ lookup "PORT" env
   scotty port $ do
-    get "/:word" $ do
+    get "/nodes/:word" $ do
       beam <- param "word"
       graph <- liftIO $ graphForUser beam 10
       liftIO stopGlobalPool
       json graph
+    get "/" $ file "fdg.html"
 
 
 

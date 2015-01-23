@@ -12,17 +12,14 @@ executable scraper-hs
                       TypeFamilies,
                       TypeOperators
   ghc-options:        -O2 -Wall -threaded -rtsopts
-  build-depends:      base,
-                      aeson,
-                      servant,
-                      servant-server,
-                      stm,
-                      text,
+  build-depends:      base >= 4.7,
+                      Cabal >= 1.20,
                       transformers,
-                      warp,
-                      scotty,
-                      hxt,
-                      http-conduit,
+                      aeson >= 0.8.0.2,
+                      text >= 1.2,
+                      scotty >= 0.9.1,
+                      hxt >= 9.3,
+                      http-conduit >= 2.1.5,
                       containers,
-                      parallel-io,
-                      bytestring
+                      parallel-io >= 0.3,
+                      bytestring >= 0.10

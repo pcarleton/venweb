@@ -130,7 +130,7 @@ getNodeLinks :: (String, [String]) -> NL
 getNodeLinks sts = 
     let
         nls = map (getNL (fst sts)) (snd sts)
-    in foldl mergeNLs (Set.empty, Set.empty) nls
+    in foldl mergeNLs (Set.singleton (fst sts), Set.empty) nls
 
 decon :: CMap -> NL
 decon m = foldl mergeNLs (Set.empty, Set.empty) $ map getNodeLinks (Map.toList m)

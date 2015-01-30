@@ -74,8 +74,8 @@ function myGraph(el) {
     }
 
     this.addLink = function (link) {
-        var sourceNode = nodes[link.source];
-        var targetNode = nodes[link.target];
+        var sourceNode = findNode(link.source);
+        var targetNode = findNode(link.target);
 
         if((sourceNode !== undefined) && (targetNode !== undefined)) {
             links.push({"source": sourceNode, "target": targetNode});
@@ -107,9 +107,10 @@ function myGraph(el) {
         .attr("height", h);
 
     var force = d3.layout.force()
-        .gravity(.05)
-        .distance(100)
-        .charge(-100)
+        //.gravity(.05)
+        //.distance(50)
+        .charge(-120)
+        .linkDistance(30)
         .size([w, h]);
 
     var nodes = force.nodes(),
@@ -174,7 +175,7 @@ window.graph = new myGraph("svg");
 var renderFn = function(error, graphData) {
   window.graphson = {nodes:_.map(graphData.nodes, _.clone), links: _.map(graphData.links, _.clone)};
   _.each(graphData.nodes, window.graph.addNode);
-  _.each(graphData.links, window.graph.addLink);
+  _.each(_.map(graphData.links, function (l) { return {source: graphData.nodes[l.source].name, target: graphData.nodes[l.target].name};}), window.graph.addLink);
 
 };
 if (pieces.length > 1) {

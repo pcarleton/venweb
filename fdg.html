@@ -10,12 +10,14 @@
 
 .nodetext {
 	font: 8px sans-serif;
+        stroke: #000;
+        stroke-width: 0px;
   
 }
 
 .link {
   stroke: #999;
-  stroke-width: 3px;
+  stroke-width: 1px;
 }
 
 </style>
@@ -26,6 +28,7 @@
 <input name="uname" type="text" value="Input venmo user name" />
 <input type="submit" value="Get graph!" />
 </form>
+<input type="button" value="Expand!" onclick="fetchfn()">
 <script>
 /**
 var width = 300,

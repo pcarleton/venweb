@@ -1,6 +1,7 @@
 require.config({
     paths: {
-        underscore: 'http://underscorejs.org/underscore'
+        underscore: 'http://underscorejs.org/underscore',
+        jquery: 'http://code.jquery.com/jquery-1.11.2.min'
     },
     shim: {
         "underscore": {
@@ -11,11 +12,11 @@ require.config({
 
 
 require(
-        ["scripts/lib/d3.js", "underscore"],
-        function(d3, _) {
+        ["scripts/lib/d3.js", "underscore", "jquery"],
+        function(d3, _, $) {
 
-var width = 300,
-    height = 300;
+var width = 600,
+    height = 600;
 
 var color = d3.scale.category20();
 
@@ -37,62 +38,144 @@ window.fetchfn = function() {
     .post(
         JSON.stringify(window.graphson),
         function(err, rawData){
-            var data = JSON.parse(rawData);
-            console.log("got response", data);
+            console.log("got response", rawData);
+            var data = JSON.parse(rawData.response);
+            renderFn({}, data);
+            window.graphson = data;
         }
     );
 };
 
 var graphson = {};
 
+function myGraph(el) {
 
-var renderFn = function(error, graph) {
-  window.graphson = { nodes: _.map(graph.nodes, _.clone), links: _.map(graph.links, _.clone)}; 
-  force
-      .nodes(graph.nodes)
-      .links(graph.links)
-      .start();
+    // Add and remove elements on the graph object
+    this.addNode = function (node) {
+        if (!findNode(node.name)) {
+        node.id = node.name;
+        nodes.push(node);
+        update();
+        }
+    }
 
+    this.removeNode = function (id) {
+        var i = 0;
+        var n = findNode(id);
+        while (i < links.length) {
+            if ((links[i]['source'] === n)||(links[i]['target'] == n)) links.splice(i,1);
+            else i++;
+        }
+        var index = findNodeIndex(id);
+        if(index !== undefined) {
+            nodes.splice(index, 1);
+            update();
+        }
+    }
 
-  var link = svg.selectAll(".link")
-      .data(graph.links)
-    .enter().append("line")
-      .attr("class", "link")
-      .style("stroke-width", function(d) { return 1; });
+    this.addLink = function (link) {
+        var sourceNode = nodes[link.source];
+        var targetNode = nodes[link.target];
 
-  var node = svg.selectAll(".node")
-      .data(graph.nodes)
-    .enter().append("circle")
-      .attr("class", "node")
-      .attr("r", 5)
-      //.style("fill", function(d) { return color(d.group); })
-      .call(force.drag);
+        if((sourceNode !== undefined) && (targetNode !== undefined)) {
+            links.push({"source": sourceNode, "target": targetNode});
+            update();
+        }
+    }
 
-  node.append("title")
-      .text(function(d) { return d.name; });
+    var findNode = function (id) {
+        for (var i=0; i < nodes.length; i++) {
+            if (nodes[i].id === id)
+                return nodes[i]
+        };
+        return false;
+    }
 
-  var texts = svg.selectAll('labels')
-		.data(graph.nodes)
-		.enter().append("text")
-		.attr("dx", 4)
-		.attr("dy", 4)
-		.attr("class", "nodetext")
-  		.text(function(d) { return d.name; })
-		.call(force.drag);
+    var findNodeIndex = function (id) {
+        for (var i=0; i < nodes.length; i++) {
+            if (nodes[i].id === id)
+                return i
+        };
+    }
 
+    // set up the D3 visualisation in the specified element
+    var w = $(el).innerWidth(),
+        h = $(el).innerHeight();
 
-  force.on("tick", function() {
-    link.attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
+    var vis = this.vis = d3.select(el).append("svg:svg")
+        .attr("width", w)
+        .attr("height", h);
 
-    node.attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; });
+    var force = d3.layout.force()
+        .gravity(.05)
+        .distance(100)
+        .charge(-100)
+        .size([w, h]);
 
-	texts.attr("x", function(d) { return d.x;})
-		 .attr("y", function(d) { return d.y;});
-  });
+    var nodes = force.nodes(),
+        links = force.links();
+
+    var update = function () {
+
+        var link = vis.selectAll("line.link")
+            .data(links, function(d) { return d.source.id + "-" + d.target.id; });
+
+        link.enter().insert("line")
+            .attr("class", "link");
+
+        link.exit().remove();
+
+        var node = vis.selectAll("g.node")
+            .data(nodes, function(d) { return d.id;});
+
+        var nodeEnter = node.enter().append("g")
+            .attr("class", "node")
+            .call(force.drag);
+        
+        nodeEnter.append("circle")
+                .attr("class", "node")
+      .attr("r", 5);
+
+//        nodeEnter.append("image")
+//            .attr("class", "circle")
+//            .attr("xlink:href", "https://d3nwyuy0nl342s.cloudfront.net/images/icons/public.png")
+//            .attr("x", "-8px")
+//            .attr("y", "-8px")
+//            .attr("width", "16px")
+//            .attr("height", "16px");
+
+        nodeEnter.append("text")
+            .attr("class", "nodetext")
+            .attr("dx", 12)
+            .attr("dy", ".35em")
+            .text(function(d) {return d.name});
+
+        node.exit().remove();
+
+        force.on("tick", function() {
+          link.attr("x1", function(d) { return d.source.x; })
+              .attr("y1", function(d) { return d.source.y; })
+              .attr("x2", function(d) { return d.target.x; })
+              .attr("y2", function(d) { return d.target.y; });
+
+          node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+        });
+
+        // Restart the force layout.
+        force.start();
+    }
+
+    // Make it all go
+    update();
+}
+
+window.graph = new myGraph("svg");
+
+var renderFn = function(error, graphData) {
+  window.graphson = {nodes:_.map(graphData.nodes, _.clone), links: _.map(graphData.links, _.clone)};
+  _.each(graphData.nodes, window.graph.addNode);
+  _.each(graphData.links, window.graph.addLink);
+
 };
 if (pieces.length > 1) {
  var name = pieces[1];

@@ -1,33 +1,19 @@
-<!DOCTYPE html>
-<!-- saved from url=(0040)http://bl.ocks.org/mbostock/raw/4062045/ -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta charset="utf-8">
-<style>
+require.config({
+    paths: {
+        underscore: 'http://underscorejs.org/underscore'
+    },
+    shim: {
+        "underscore": {
+            exports: "_"
+        }
+    }
+});
 
-.node {
-  stroke: #fff;
-  stroke-width: 1.5px;
-}
 
-.nodetext {
-	font: 8px sans-serif;
-  
-}
+require(
+        ["scripts/lib/d3.js", "underscore"],
+        function(d3, _) {
 
-.link {
-  stroke: #999;
-  stroke-width: 3px;
-}
-
-</style>
-<script data-main="/scripts/main" src="/scripts/require.js"></script>
-<style type="text/css"></style></head>
-<body>
-<form action="/">
-<input name="uname" type="text" value="Input venmo user name" />
-<input type="submit" value="Get graph!" />
-</form>
-<script>
-/**
 var width = 300,
     height = 300;
 
@@ -45,11 +31,11 @@ var svg = d3.select("body").append("svg")
 var query = window.location.search.substring(1);
 var pieces = query.split("=");
 
-var fetchfn = function() {
+window.fetchfn = function() {
    d3.xhr("/expand")
     .header("Content-Type", "application/json")
     .post(
-        JSON.stringify(graphson),
+        JSON.stringify(window.graphson),
         function(err, rawData){
             var data = JSON.parse(rawData);
             console.log("got response", data);
@@ -57,18 +43,16 @@ var fetchfn = function() {
     );
 };
 
-if (pieces.length > 1) {
-var name = pieces[1];
-
 var graphson = {};
 
-d3.json("/nodes/" + name, function(error, graph) {
+
+var renderFn = function(error, graph) {
+  window.graphson = { nodes: _.map(graph.nodes, _.clone), links: _.map(graph.links, _.clone)}; 
   force
       .nodes(graph.nodes)
       .links(graph.links)
       .start();
 
-  graphson = graph;
 
   var link = svg.selectAll(".link")
       .data(graph.links)
@@ -109,8 +93,11 @@ d3.json("/nodes/" + name, function(error, graph) {
 	texts.attr("x", function(d) { return d.x;})
 		 .attr("y", function(d) { return d.y;});
   });
-});
+};
+if (pieces.length > 1) {
+ var name = pieces[1];
+
+d3.json("/nodes/" + name, renderFn); 
 }
-*/
-</script>
-</body></html>
+});
+

@@ -15,6 +15,7 @@ import qualified Data.Map as Map
 
 import Web.Scotty
 import System.Environment
+import Network.Wai.Middleware.Static
 
 import Data.Monoid (mconcat)
 
@@ -33,12 +34,13 @@ data Link = Link
     } deriving (Show,Generic)
     
 instance A.ToJSON Link
+instance A.FromJSON Link
 
 data Node = Node
     { name :: T.Text } deriving (Show,Generic)
     
 instance A.ToJSON Node
-
+instance A.FromJSON Node
 
 data Graph = Graph
     {
@@ -46,6 +48,7 @@ data Graph = Graph
         links :: [Link]
     } deriving (Show, Generic)
 instance A.ToJSON Graph
+instance A.FromJSON Graph
 
 type NL = (Set String, Set (String, String))
 type CMap = Map String [String]
@@ -76,7 +79,7 @@ friends f = f >>> css "div" >>>  hasAttrValue "class" ("friend-list" ==)
 
 
 getConns dest = do
-    --putStrLn $ "Getting :" ++ dest
+    putStrLn $ "Getting :" ++ dest
     page <- fromWeb ("https://venmo.com" ++ dest)
     runX . payments $ page
 
@@ -103,7 +106,7 @@ getWeb :: Int -> [String] -> CMap -> IO CMap
 
 getWeb _ [] b = return b
 getWeb mx xs b = --return b
-        if length (Map.keys b) > mx then return b
+        if mx == 0 then return b
         else 
         let linkMapIOs = parallel $ map (im Map.empty) xs
             lookup = flip $ Map.findWithDefault []
@@ -114,7 +117,7 @@ getWeb mx xs b = --return b
             qs <- return . concat $ map (lookup newMap) xs
             -- ms <- (Map.findWithDefault [] x) =<< nm
             newSet <- return $ Set.toList $ Set.difference (Set.fromList qs) (Set.fromList xs)
-            getWeb mx newSet newMap
+            getWeb (mx - 1) newSet newMap
 
 
 mergeNLs :: NL -> NL -> NL
@@ -143,24 +146,52 @@ extractGraph cm =
     in Graph nodelist linklist
 
 
+graphNames :: Graph -> [String]
+graphNames g = map (T.unpack . name) (nodes g)
+
+decodeMap :: Graph -> CMap
+decodeMap g =
+        let names = map (T.unpack . name) (nodes g)
+            nameLookup lnk = ((names !! (source lnk)), (names !! (target lnk)))
+            lnkTupes = map nameLookup (links g)
+            accumulate m tup = Map.insert (fst tup) ((snd tup) : (Map.findWithDefault [] (fst tup) m)) m
+        in foldl accumulate Map.empty lnkTupes
+
+
+expandGraph :: Graph -> IO Graph
+
+expandGraph g =
+        let gmap = decodeMap g
+            names = graphNames g
+            edgeNames = Set.toList $ Set.difference (Set.fromList names) (Map.keysSet gmap)
+            mapResult = getWeb 1 edgeNames gmap
+        in fmap extractGraph mapResult
+
 
 graphForUser :: String -> Int -> IO Graph
-
 graphForUser u deg = 
     let result = getWeb deg ["/" ++ u] Map.empty
     in fmap  extractGraph result
+
+expandInput :: ActionM ()
+expandInput = do
+        g <- jsonData
+        graph <- liftIO $ expandGraph g
+        json graph
 
 main :: IO ()
 main = do
   env <- getEnvironment
   let port = maybe 8080 read $ lookup "PORT" env
   scotty port $ do
+    middleware $ staticPolicy (noDots >-> addBase "static")
     get "/nodes/:word" $ do
       beam <- param "word"
-      graph <- liftIO $ graphForUser beam 10
+      graph <- liftIO $ graphForUser beam 1
       liftIO stopGlobalPool
       json graph
     get "/" $ file "fdg.html"
+    post "/expand" expandInput
 
 
 

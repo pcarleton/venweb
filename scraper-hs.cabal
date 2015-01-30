@@ -18,6 +18,7 @@ executable scraper-hs
                       aeson >= 0.8.0.2,
                       text >= 1.2,
                       scotty >= 0.9.1,
+                      wai-middleware-static >= 0.6,
                       hxt >= 9.3,
                       http-conduit >= 2.1.5,
                       containers,

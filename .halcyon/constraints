@@ -110,6 +110,7 @@ void-0.7
 wai-3.0.2.2
 wai-extra-3.0.4.1
 wai-logger-2.2.3
+wai-middleware-static-0.6.0.1
 warp-3.0.5.2
 word8-0.1.1
 x509-1.5.0.1

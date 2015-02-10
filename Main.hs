@@ -5,8 +5,8 @@ import qualified Network.HTTP.Conduit as C
 import Data.Tree.NTree.TypeDefs
 import qualified Data.ByteString.Lazy as L
 import Data.Char (chr)
+import Data.List (isPrefixOf)
 
-import Data.String.Utils (startswith)
 import GHC.Generics
 
 import qualified Data.Aeson as A
@@ -14,6 +14,7 @@ import qualified Data.Aeson as A
 import Web.Scotty
 import System.Environment
 import Network.Wai.Middleware.Static
+import Control.Monad.IO.Class (liftIO)
 
 type Username = String
 type FullName = String
@@ -38,6 +39,9 @@ data Transaction = Transaction
      } deriving (Show, Generic)
 
 instance A.ToJSON Transaction
+
+startswith :: String -> String -> Bool
+startswith pre = isPrefixOf pre
 
 myUnpack :: L.ByteString -> String
 myUnpack = map (chr . fromEnum) . L.unpack

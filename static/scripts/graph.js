@@ -1,14 +1,13 @@
-
-define(
-        ["scripts/lib/d3.js","jquery"],
+define(["scripts/lib/d3.js","jquery"],
         function(d3, $) {
         return {
         fdg: function(el) {
 
     // Add and remove elements on the graph object
     this.addNode = function (node) {
-        if (!findNode(node.name)) {
+        if (!this.findNode(node.name)) {
         node.id = node.name;
+        node.children = [];
         nodes.push(node);
         update();
         }
@@ -29,8 +28,31 @@ define(
     }
 
     this.addLink = function (link) {
-        var sourceNode = findNode(link.source);
-        var targetNode = findNode(link.target);
+        var sourceNode = this.findNode(link.source);
+        var targetNode = this.findNode(link.target);
+
+
+
+        if ((sourceNode === false) && (targetNode !== undefined)) {
+            this.addNode({name: link.source, parent: targetNode, x: targetNode.x + 5, y: targetNode.y - (10*sourceNode.children.length), charge: 0});
+            sourceNode = this.findNode(link.source);
+            targetNode.children.push(sourceNode);
+
+        }
+
+        if ((sourceNode !== undefined) && (targetNode === false)) {
+            this.addNode({name: link.target, parent: sourceNode,  x: sourceNode.x + 5, y: sourceNode.y - (10*sourceNode.children.length), charge: 0});
+            targetNode = this.findNode(link.target);
+            sourceNode.children.push(targetNode);
+        }
+        var link = {"source":sourceNode, "target": targetNode};
+
+        if (this.findLink(link)) {
+            return;
+        }
+
+        console.log(nodes);
+        console.log(links)
 
         if((sourceNode !== undefined) && (targetNode !== undefined)) {
             links.push({"source": sourceNode, "target": targetNode});
@@ -38,15 +60,25 @@ define(
         }
     }
 
-    var findNode = function (id) {
-        for (var i=0; i < nodes.length; i++) {
-            if (nodes[i].id === id)
-                return nodes[i]
-        };
+    this.findLink = function(link) {
+        for (var i=0; i < links.length; i++) {
+            if ((links[i].source === link.source && links[i].target === link.target) ||
+                (links[i].target === link.source && links[i].source === link.target)) {
+                return links[i];
+            }
+        }
         return false;
     }
 
-    var findNodeIndex = function (id) {
+    this.findNode = function (id) {
+        for (var i=0; i < nodes.length; i++) {
+            if (nodes[i].id === id)
+                return nodes[i];
+        }
+        return false;
+    }
+
+    this.findNodeIndex = function (id) {
         for (var i=0; i < nodes.length; i++) {
             if (nodes[i].id === id)
                 return i
@@ -61,19 +93,37 @@ define(
         .attr("width", w)
         .attr("height", h);
 
-    var links = vis.append("g").attr("id", "links");
-    var nodes = vis.append("g").attr("id", "nodes");
+    vis.append("g").attr("id", "links");
+    vis.append("g").attr("id", "nodes");
+
+    var maxCharge = -120;
+
+    var chargeFunc = function (d) {
+            if (d.charge === undefined) {
+                return maxCharge;
+            }
+
+            if (d.charge > maxCharge) {
+               d.charge = d.charge - 5;
+               return d.charge;
+            } else if (d.charge < maxCharge) {
+               d.charge = maxCharge;
+            }
+            return d.charge;
+        };
 
     var force = d3.layout.force()
         //.gravity(.05)
         //.distance(50)
-        .charge(-120)
+        .charge(chargeFunc)
         .linkDistance(30)
         .size([w, h]);
 
+    this.force = force;
 
-    var nodes = force.nodes(),
-        links = force.links();
+
+    var nodes = this.nodes = force.nodes(),
+        links = this.links = force.links();
 
     var update = function () {
 
@@ -91,8 +141,18 @@ define(
         var drag = force.drag()
                 .on("dragstart", function() { d3.event.sourceEvent.stopPropagation(); });
 
+
+        var xFunc = function(d) {
+            if (d.parent !== undefined) {
+                return d.parent.x;
+            }
+            return 0;
+        }
         var nodeEnter = node.enter().append("g")
             .attr("class", "node")
+   //         .attr("x", xFunc)
+     //       .attr("y", function(d) { if (d.parent !== undefined) return d.parent.y;})
+
             .call(drag);
 
         nodeEnter.append("text")

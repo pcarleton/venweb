@@ -166,17 +166,41 @@ define(["scripts/lib/d3.js","jquery", "underscore"],
      //       .attr("y", function(d) { if (d.parent !== undefined) return d.parent.y;})
 
             .call(drag);
+        nodeEnter.append("svg:image")
+           .attr('x',-9)
+           .attr('y',-12)
+           .attr('width', 20)
+           .attr('height', 24)
+           .attr("class", "node-image")
+           .attr("xlink:href", function (d) {return d.pic || "https://s3.amazonaws.com/venmo/no-image.gif"});
+
 
         nodeEnter.append("text")
             .attr("class", "nodetext")
-            .attr("dx", 6)
-            .attr("dy", ".35em")
-            .text(function(d) {return d.name});
+            .attr("dx", -8)
+            .attr("dy", 14)
+            .text(function(d) {return d.fullname || d.name});
 
-        nodeEnter.append("circle")
-                .attr("class", "node")
-                .attr("class", "handle")
-      .attr("r", 5);
+
+        var nodeUpdate = node;
+
+        nodeUpdate.selectAll("text")
+            .attr("class", "nodetext")
+            .attr("dx", -8)
+            .attr("dy", 14)
+            .text(function(d) {return d.fullname || d.name});
+
+        nodeUpdate.selectAll(".node-image")
+            .attr('x',-9)
+           .attr('y',-12)
+           .attr('width', 20)
+           .attr('height', 24)
+           .attr("xlink:href", function (d) {return d.pic || "https://s3.amazonaws.com/venmo/no-image.gif"})
+//
+//        nodeEnter.append("circle")
+//                .attr("class", "node")
+//                .attr("class", "handle")
+//      .attr("r", 5);
 
 //        nodeEnter.append("image")
 //            .attr("class", "circle")

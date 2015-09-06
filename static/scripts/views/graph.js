@@ -19,8 +19,6 @@ define(["scripts/lib/d3.js",
                 this.render();
             },
             updateRoot: function() {
-                console.log("updating root");
-
                 var rootNode = this.model.get("root");
 
                 if (this.d3graph.findNode(rootNode.name)) {
@@ -30,10 +28,6 @@ define(["scripts/lib/d3.js",
                 }
             },
             addNodes: function() {
-                console.log("AddNodes");
-                // Add initial node
-                console.log("Links: " + this.model.get("transactions"));
-
                 _.each(this.model.get("transactions"), _.bind(function(l) {
                     this.d3graph.addLink(l);
                 }, this));

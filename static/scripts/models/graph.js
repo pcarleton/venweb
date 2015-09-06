@@ -20,11 +20,14 @@ function(_, $, Backbone) {
         $.get("/nodes/" + name, _.bind(function(data) {
 
 
-            var transNodes = this.nodesFromTransactions();
+            var transNodes = this.nodesFromTransactions(data);
 
             // Update root node with more info.
             var moreInfo = this.nodeByName(transNodes, this.get("root").name);
-            _.extend(this.get("root"), moreInfo);
+
+
+            _.defaults(this.get("root"), moreInfo);
+            this.trigger("change:root", this);
 
             this.set({
                 "transactions": data,
@@ -38,20 +41,18 @@ function(_, $, Backbone) {
     },
 
     rootNode: function() {
-        return this.nodeByName(this.get("root"), this.get("nodes"));
+        return this.nodeByName(this.get("nodes"), this.get("root").name);
     },
 
     nodeByName: function(nodes, nodeName) {
-        console.log(nodes);
         return _.find(nodes, function (node) {
-            console.log(node);
             return node.name == nodeName;
         });
     },
 
-    nodesFromTransactions: function() {
-        var sources = _.pluck(this.get("transactions"), "source");
-        var targets = _.pluck(this.get("transactions"), "target");
+    nodesFromTransactions: function(transactions) {
+        var sources = _.pluck(transactions, "source");
+        var targets = _.pluck(transactions, "target");
 
         return _.union(sources, targets);
     },

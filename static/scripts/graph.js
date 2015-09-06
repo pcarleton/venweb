@@ -5,7 +5,6 @@ define(["scripts/lib/d3.js","jquery", "underscore"],
 
     // Add and remove elements on the graph object
     this.addNode = function (node) {
-        console.log("addnode");
         if (!this.findNode(node.name)) {
             node.id = node.name;
             node.children = [];
@@ -41,8 +40,6 @@ define(["scripts/lib/d3.js","jquery", "underscore"],
         var sourceNode = this.findNode(link.source.name);
         var targetNode = this.findNode(link.target.name);
 
-
-        console.log("Adding link: " + sourceNode + " " + targetNode);
         if ((sourceNode === false) && (targetNode !== undefined)) {
             this.addChild(targetNode, link.source);
             sourceNode = this.findNode(link.source.name);

@@ -21,10 +21,12 @@ require(
         "underscore",
         "jquery",
         "views/graph",
-        "models/graph"],
-        function(d3, _, $, GraphView, GraphModel) {
+        "models/graph",
+        "views/edge-list"],
+        function(d3, _, $, GraphView, GraphModel, EdgeListView) {
         var graphModel = new GraphModel();
         var graphView = new GraphView({model: graphModel});
+        var edgeListView = new EdgeListView({model: graphModel});
 
         graphModel.fetchGraph("Paul-Carleton");
 

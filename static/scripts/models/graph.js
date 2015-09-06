@@ -32,11 +32,12 @@ function(_, $, Backbone) {
             this.set({
                 "transactions": data,
             });
-            //this.set("edgeQueue", _.difference(this.get("nodes"), transNodes));
 
-            //this.set("nodes", _.union(transNodes, this.get("nodes")));
-           //this.set("nodes", _.union(this.get("nodes"), data.nodes));
-           //this.set("indLinks", data.links);
+            this.set("edgeQueue",
+                _.difference(_.pluck(transNodes, "name"),
+                             [this.get('root').name]));
+
+            this.set("nodes", _.union(transNodes, this.get("nodes")));
         }, this), "json")
     },
 
@@ -54,23 +55,59 @@ function(_, $, Backbone) {
         var sources = _.pluck(transactions, "source");
         var targets = _.pluck(transactions, "target");
 
-        return _.union(sources, targets);
+        var both = _.union(sources, targets);
+        return _.uniq(both, function (node) { return node.name});
     },
     namesForLink: function(nodes, l) {
         console.log("Nodes: " + nodes);
         console.log("L: " + l);
         return {"source": nodes[l.source].name, "target": nodes[l.target].name};
     },
+    expandEdges: function() {
 
-    expandGraph: function() {
-        $.post("/expand", JSON.stringify({nodes: this.get("nodes"), links: this.get("indLinks")}), _.bind(function(data) {
+        var edgesToExpand = this.get("edgeQueue");
+        console.log(edgesToExpand);
+        _.each(edgesToExpand, this.expandName, this);
+    },
+
+    expandName: function(name) {
+        console.log("Expanding "+ name);
+
+        $.get("/nodes/" + name, _.bind(function(data) {
+            console.log("Got data for : " + name);
+
+
+            var transNodes = this.nodesFromTransactions(data);
+
             this.set({
-                "links": _.map(data.links, _.bind(this.namesForLink, this, data.nodes))
+                "transactions": _.union(this.get("transactions"), data),
             });
-           this.set("nodes", _.union(this.get("nodes"), data.nodes));
-           this.set("indLinks", data.links);
 
-        }, this), "json")
+            var startingEdgeQueue = this.get("edgeQueue");
+
+            startingEdgeQueue = _.reject(startingEdgeQueue, function (uname) {
+                return uname == name;
+            });
+
+            this.set("edgeQueue",
+                _.union(_.difference(_.pluck(transNodes, "name"),
+                                     _.pluck(this.get("nodes"), "name")),
+                        startingEdgeQueue));
+
+            this.set("nodes", _.union(transNodes, this.get("nodes")));
+        }, this), "json").fail(_.bind(function(msg) {
+            console.log("failed on " + name);
+            console.log(msg);
+
+            // Still remove from edge list
+            var startingEdgeQueue = this.get("edgeQueue");
+
+            startingEdgeQueue = _.reject(startingEdgeQueue, function (uname) {
+                return uname == name;
+            });
+
+            this.set("edgeQueue", _.clone(startingEdgeQueue));
+        }, this));
     }
    });
 

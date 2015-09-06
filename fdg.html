@@ -12,7 +12,7 @@
 	font: 6px sans-serif;
         stroke: #BBB;
         stroke-width: 0.1px;
-  
+
 }
 
 .link {
@@ -28,8 +28,11 @@
 <input name="uname" type="text" value="Input venmo user name" />
 <input type="submit" value="Get graph!" />
 </form>
-<input type="button" value="Expand!" onclick="fetchfn()">
+<div id="edge-list">
+    <input class="expand-all-button" type="button" value="Expand!">
+</div>
 <div id="container"></div>
+
 <script>
 /**
 var width = 300,

@@ -13,19 +13,28 @@ define(["scripts/lib/d3.js",
 //                Backbone.Model.prototype.initialize.call(this, options);
 
                  _.bindAll(this, 'addNodes', 'render');
-                this.model.bind('change', this.addNodes);
+                this.model.bind('change:transactions', this.addNodes);
+                this.model.bind('change:root', this.updateRoot, this);
+
                 this.render();
             },
-            addNodes: function() {
-                // Add initial node
-                if (this.model.get("links").length == 0) {
-                   var newN = function(n) {
-                        this.d3graph.addNode({name: n.name});
-                    };
-                   _.each(this.model.get("nodes"), _.bind(newN, this));
-                }
+            updateRoot: function() {
+                console.log("updating root");
 
-                _.each(this.model.get("links"), _.bind(function(l) {
+                var rootNode = this.model.get("root");
+
+                if (this.d3graph.findNode(rootNode.name)) {
+                    this.d3graph.updateNode(rootNode.name, rootNode);
+                } else {
+                    this.d3graph.addNode(_.clone(rootNode));
+                }
+            },
+            addNodes: function() {
+                console.log("AddNodes");
+                // Add initial node
+                console.log("Links: " + this.model.get("transactions"));
+
+                _.each(this.model.get("transactions"), _.bind(function(l) {
                     this.d3graph.addLink(l);
                 }, this));
             },

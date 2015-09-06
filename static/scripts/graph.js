@@ -1,26 +1,36 @@
-define(["scripts/lib/d3.js","jquery"],
-        function(d3, $) {
+define(["scripts/lib/d3.js","jquery", "underscore"],
+        function(d3, $, _) {
         return {
         fdg: function(el) {
 
     // Add and remove elements on the graph object
     this.addNode = function (node) {
+        console.log("addnode");
         if (!this.findNode(node.name)) {
-        node.id = node.name;
-        node.children = [];
-        nodes.push(node);
-        update();
+            node.id = node.name;
+            node.children = [];
+            nodes.push(node);
+            update();
         }
+    }
+
+    this.updateNode = function (id, newinfo) {
+        var n = this.findNode(id);
+        if (!n) {
+            console.log("Can't update "+ id);
+            return;
+        }
+        _.extend(n, newinfo);
     }
 
     this.removeNode = function (id) {
         var i = 0;
-        var n = findNode(id);
+        var n = this.findNode(id);
         while (i < links.length) {
             if ((links[i]['source'] === n)||(links[i]['target'] == n)) links.splice(i,1);
             else i++;
         }
-        var index = findNodeIndex(id);
+        var index = this.findNodeIndex(id);
         if(index !== undefined) {
             nodes.splice(index, 1);
             update();
@@ -28,22 +38,19 @@ define(["scripts/lib/d3.js","jquery"],
     }
 
     this.addLink = function (link) {
-        var sourceNode = this.findNode(link.source);
-        var targetNode = this.findNode(link.target);
+        var sourceNode = this.findNode(link.source.name);
+        var targetNode = this.findNode(link.target.name);
 
 
-
+        console.log("Adding link: " + sourceNode + " " + targetNode);
         if ((sourceNode === false) && (targetNode !== undefined)) {
-            this.addNode({name: link.source, parent: targetNode, x: targetNode.x + 5, y: targetNode.y - (10*sourceNode.children.length), charge: 0});
-            sourceNode = this.findNode(link.source);
-            targetNode.children.push(sourceNode);
-
+            this.addChild(targetNode, link.source);
+            sourceNode = this.findNode(link.source.name);
         }
 
         if ((sourceNode !== undefined) && (targetNode === false)) {
-            this.addNode({name: link.target, parent: sourceNode,  x: sourceNode.x + 5, y: sourceNode.y - (10*sourceNode.children.length), charge: 0});
-            targetNode = this.findNode(link.target);
-            sourceNode.children.push(targetNode);
+            this.addChild(sourceNode, link.target);
+            targetNode = this.findNode(link.target.name);
         }
         var link = {"source":sourceNode, "target": targetNode};
 
@@ -51,19 +58,27 @@ define(["scripts/lib/d3.js","jquery"],
             return;
         }
 
-        console.log(nodes);
-        console.log(links)
-
         if((sourceNode !== undefined) && (targetNode !== undefined)) {
             links.push({"source": sourceNode, "target": targetNode});
             update();
         }
     }
 
+    this.addChild = function(parentNode, childInfo) {
+            var newNode = _.defaults({
+                  parent: parentNode,
+                  x: parentNode.x + 5,
+                  y: parentNode.y - (10*parentNode.children.length),
+                  charge: 0}, childInfo);
+            this.addNode(newNode);
+            parentNode.children.push(newNode);
+    }
+
     this.findLink = function(link) {
         for (var i=0; i < links.length; i++) {
-            if ((links[i].source === link.source && links[i].target === link.target) ||
-                (links[i].target === link.source && links[i].source === link.target)) {
+            if ((links[i].source.id === link.source.id
+                    && links[i].target.id === link.target.id) ||
+                (links[i].target.id === link.source.id && links[i].source.id === link.target.id)) {
                 return links[i];
             }
         }
@@ -160,7 +175,7 @@ define(["scripts/lib/d3.js","jquery"],
             .attr("dx", 6)
             .attr("dy", ".35em")
             .text(function(d) {return d.name});
-        
+
         nodeEnter.append("circle")
                 .attr("class", "node")
                 .attr("class", "handle")

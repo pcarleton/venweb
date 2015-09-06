@@ -13,9 +13,8 @@ executable scraper-hs
                       TypeOperators
   ghc-options:        -O2 -Wall -threaded -rtsopts
   build-depends:      base >= 4.7,
-                      Cabal >= 1.20,
                       transformers,
-                      aeson >= 0.8.0.2,
+                      aeson >= 0.9.0.0,
                       text >= 1.2,
                       scotty >= 0.9.1,
                       wai-middleware-static >= 0.6,

@@ -115,6 +115,7 @@ dt {
 
 .faq {
     width: auto;
+    max-width: 650px;
     overflow: wrap;
 }
 

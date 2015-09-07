@@ -17,7 +17,7 @@ function(_, $, Backbone) {
         _.bindAll(this, 'namesForLink', "nodesFromTransactions")
     },
     fetchGraph: function(name) {
-        this.set("root", {"name": name});
+        this.set("root", {"name": name.toLowerCase()});
         // Fetch from server
 
         $.get("/nodes/" + name, _.bind(function(data) {

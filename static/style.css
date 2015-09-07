@@ -84,19 +84,19 @@ search-container {
     flex-direction: column;
     -webkit-flex-direction: column;
     min-height: 550px;
+    height: 100vh;
     min-width: 300px;
 }
 
 .vbox > div {
-    flex: 1;
-    -webkit-flex: 1;
+
 }
 
 #container {
     height: auto;
     min-height: 300px;
     margin: 2px;
-    flex: 5;
+    flex: 2;
     -webkit-flex: 5;
 }
 
@@ -116,6 +116,10 @@ dt {
 .faq {
     width: auto;
     overflow: wrap;
+}
+
+.footer {
+    margin-bottom: 30px;
 }
 
 .node {

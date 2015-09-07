@@ -32,7 +32,7 @@ define(["d3",
             },
             render: function(){
                 var width = this.$el.width(),
-                    height = this.$el.height();
+                    height = this.$el.outerHeight();
 
                 var zoom = d3.behavior.zoom()
                     .scaleExtent([0.1, 20])

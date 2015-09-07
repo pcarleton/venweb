@@ -49,6 +49,12 @@ define(["d3",
                     .attr("height", height)
                     .call(zoom);
 
+                var defs = svg.append("defs").attr("id", "imgdefs")
+
+                var clipPath = defs.append('clipPath').attr('id', 'clip-circle')
+                    .append("circle")
+                    .attr("r", 9);
+
                 var rect = svg.append("rect")
                         .attr("width", width)
                         .attr("height", height)

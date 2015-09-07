@@ -172,7 +172,8 @@ define(["d3","jquery", "underscore"],
            .attr('width', 20)
            .attr('height', 24)
            .attr("class", "node-image")
-           .attr("xlink:href", function (d) {return d.pic || "https://s3.amazonaws.com/venmo/no-image.gif"});
+           .attr("xlink:href", function (d) {return d.pic || "https://s3.amazonaws.com/venmo/no-image.gif"})
+           .attr("clip-path", "url(#clip-circle)");
 
 
         nodeEnter.append("text")
@@ -196,6 +197,7 @@ define(["d3","jquery", "underscore"],
            .attr('width', 20)
            .attr('height', 24)
            .attr("xlink:href", function (d) {return d.pic || "https://s3.amazonaws.com/venmo/no-image.gif"})
+           .attr("clip-path", "url(#clip-circle)");
 //
 //        nodeEnter.append("circle")
 //                .attr("class", "node")

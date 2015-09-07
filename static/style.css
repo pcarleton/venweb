@@ -93,8 +93,15 @@ search-container {
 }
 
 #container {
-    flex: 3;
-    -webkit-flex: 3;
+    height: auto;
+    min-height: 300px;
+    margin: 2px;
+    flex: 5;
+    -webkit-flex: 5;
+}
+
+#container svg {
+    height: 100%;
 }
 
 .fbox div {

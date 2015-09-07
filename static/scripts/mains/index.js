@@ -14,8 +14,11 @@ require(
                 return;
             }
 
-            window.location.href = "/graph/" + inputName;
+            window.location.href = "/graph/" + $.trim(inputName);
         }
+
+        // Hack to get click events on mobile
+        $("#submit-username").onclick = function() {};
 
         $("#submit-username").click(goToGraph);
 

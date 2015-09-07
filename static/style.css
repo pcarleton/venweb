@@ -8,6 +8,8 @@ h1 {
 
 input {
     font-size: 16px;
+    padding: 0;
+    margin: 0;
 }
 
 .box{
@@ -19,18 +21,35 @@ input {
 .container-1{
   width: 300px;
   vertical-align: middle;
-  white-space: nowrap;=
+  white-space: nowrap;
 }
 
-.container-1 input.search{
-  width: 300px;
-  height: 50px;
+search-container {
+    align-items: stretch;
+    -webkit-align-items: stretch;
+}
+
+.container-1 input.search-box {
+  width: 250px;
+  height: 48px;
   font-size: 10pt;
-  float: left;
+  line-height: 10pt;
   padding-left: 15px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  box-shadow: none;
+  appearance: none;
+  outline: none;
+  border: solid 1px #777;
+}
+
+.container-1 button{
+    cursor:pointer;
+    line-height: 10pt;
 }
 
 .container-1 button.icon{
@@ -40,25 +59,42 @@ input {
   -moz-border-radius-bottomright: 5px;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
+  height:50px;
 
   border: none;
   background: rgb(61, 149, 206);
-  height: 50px;
   width: 50px;
   color: #fff;
   opacity: 1;
   font-size: 10pt;
-  margin-left: -50px;
-}
-
-.container-1:hover button.icon:hover{
-    background: rgb(91, 189, 256);
 }
 
 .fbox {
     display: flex;
+    display:-webkit-flex;
     flex-direction: row;
+    -webkit-flex-direction: row;
     justify-content: center;
+    -webkit-justify-content: center;
+}
+
+.vbox {
+    display: flex;
+    display:-webkit-flex;
+    flex-direction: column;
+    -webkit-flex-direction: column;
+    min-height: 550px;
+    min-width: 300px;
+}
+
+.vbox > div {
+    flex: 1;
+    -webkit-flex: 1;
+}
+
+#container {
+    flex: 3;
+    -webkit-flex: 3;
 }
 
 .fbox div {
@@ -71,7 +107,7 @@ dt {
 }
 
 .faq {
-    width: 500px;
+    width: auto;
     overflow: wrap;
 }
 

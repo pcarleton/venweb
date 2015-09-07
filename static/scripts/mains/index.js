@@ -6,7 +6,7 @@ require(
             var inputName = $("#username-box").val();
 
             // Strip @ sign
-            if (inputName.startsWith("@")) {
+            if (inputName.indexOf("@") == 0) {
                 inputName = inputName.slice(1);
             }
 
@@ -18,9 +18,7 @@ require(
         }
 
         // Hack to get click events on mobile
-        $("#submit-username").onclick = function() {};
-
-        $("#submit-username").click(goToGraph);
+        document.getElementById("submit-username").onclick = goToGraph;
 
         $('#username-box').keyup(function(e){
             if(e.keyCode == 13) {

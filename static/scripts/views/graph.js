@@ -6,8 +6,6 @@ define(["d3",
         function(d3, _, $, Backbone, grapher) {
 
         var GraphView = Backbone.View.extend({
-            width: 600,
-            height: 600,
             el: $('#container'),
             initialize: function(options) {
 //                Backbone.Model.prototype.initialize.call(this, options);
@@ -33,8 +31,8 @@ define(["d3",
                 }, this));
             },
             render: function(){
-                var width = 600,
-                    height = 600;
+                var width = this.$el.width(),
+                    height = this.$el.height();
 
                 var zoom = d3.behavior.zoom()
                     .scaleExtent([0.1, 20])

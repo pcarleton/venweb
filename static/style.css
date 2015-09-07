@@ -55,6 +55,26 @@ input {
     background: rgb(91, 189, 256);
 }
 
+.fbox {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.fbox div {
+    margin: 10px;
+}
+
+dt {
+    margin: 10px;
+    font-weight: 600;
+}
+
+.faq {
+    width: 500px;
+    overflow: wrap;
+}
+
 .node {
   stroke: #fff;
   stroke-width: 1.5px;

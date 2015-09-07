@@ -4,7 +4,17 @@
     <link href="/style.css" rel="stylesheet" type="text/css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
-<title>6 Degrees of Venmo</title>
+<title>6 Degrees of Venmo | Graph</title>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-5529491-3', 'auto');
+  ga('send', 'pageview');
+
+</script>
 <script>
 var require = {
     baseUrl: "/scripts",
@@ -28,10 +38,17 @@ var require = {
 <script data-main="/scripts/mains/graph.js" src="/scripts/require.js"></script>
 <style type="text/css"></style></head>
 <body>
-<div id="edge-list">
-    <input class="expand-all-button" type="button" value="Expand">
+<div class="fbox" id="edge-list">
+    <div><input class="expand-all-button" type="button" value="Expand"></div>
     <div>Degree: <span id="degree-span">0</span></div>
     <div>People: <span id="node-count-span">1</span></div>
+    <div><span><a href="/">Start Over</a></span></div>
 </div>
-<div id="container"></div>
+<div class="fbox" id="container"></div>
+<div class="fbox"><div><span class="explain">Scroll to zoom, drag to pan</span></div>
+    <div><span><a href="/faq">FAQ</a></span></div>
+    <div><span><a href="https://github.com/pcarleton/scraper-hs">GitHub</a></span></div>
+
+
+</div>
 </body></html>

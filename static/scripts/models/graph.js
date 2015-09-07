@@ -3,7 +3,7 @@ define(["underscore",
         "backbone",
         "graph"],
 function(_, $, Backbone) {
-   var AJAX_CONCURRENCY = 2;
+   var AJAX_CONCURRENCY = 4;
    var GraphModel = Backbone.Model.extend({
    defaults: {
     nodes: [],
@@ -44,6 +44,10 @@ function(_, $, Backbone) {
 
             this.set("nodes", _.union(transNodes, this.get("nodes")));
         }, this), "json")
+        .fail(function() {
+            $("#container").html("Sorry! There was a problem getting data for the username: " +
+                                 name + ". Please make sure you've entered it correctly or try a different name.");
+        });
     },
 
     rootNode: function() {
@@ -61,6 +65,10 @@ function(_, $, Backbone) {
         var targets = _.pluck(transactions, "target");
 
         var both = _.union(sources, targets);
+
+        _.each(both, function (node) {
+            node.name = node.name.toLowerCase();
+        })
         return _.uniq(both, function (node) { return node.name});
     },
     namesForLink: function(nodes, l) {
@@ -85,7 +93,7 @@ function(_, $, Backbone) {
                             _.bind(this.expandNext, this))
         } else {
             this.runningRequests--;
-            if (!this.isFetching()) {
+            if (this.runningRequests == 0 && !this.isFetching()) {
                 this.set("degree", this.get("degree") + 1);
             }
         }

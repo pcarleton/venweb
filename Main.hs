@@ -116,4 +116,5 @@ main = do
       transactions <- liftIO $ transactionsForUser uname
       json transactions
     get (regex "/graph/.*") $ file "fdg.html"
+    get "/faq" $ file "faq.html"
     get "/" $ file "index.html"

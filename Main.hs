@@ -50,7 +50,7 @@ fetchAndParse :: String -> IO (IOSArrow XmlTree XmlTree)
 fetchAndParse uri = do
     text <- C.simpleHttp uri
     return $ readString [withParseHTML yes, withWarnings no] $ myUnpack text
-    
+
 css :: String -> IOSArrow XmlTree XmlTree
 css tag = multi (hasName tag)
 
@@ -115,4 +115,5 @@ main = do
       uname <- param "username"
       transactions <- liftIO $ transactionsForUser uname
       json transactions
-    get "/" $ file "fdg.html"
+    get (regex "/graph/.*") $ file "fdg.html"
+    get "/" $ file "index.html"

@@ -1,4 +1,4 @@
-define(["scripts/lib/d3.js","jquery", "underscore"],
+define(["d3","jquery", "underscore"],
         function(d3, $, _) {
         return {
         fdg: function(el) {

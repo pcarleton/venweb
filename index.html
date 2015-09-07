@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+        var require = {
+            paths: {
+                underscore: '/scripts/lib/underscore',
+                jquery: '/scripts/lib/jquery',
+                backbone: '/scripts/lib/backbone'
+            },
+            shim: {
+                "underscore": {
+                    exports: "_"
+                },
+                'backbone': {
+                    deps: ['underscore', 'jquery'],
+                    exports: 'Backbone'
+                }
+            }
+        };
+    </script>
+    <script data-main="/scripts/mains/index" src="/scripts/require.js"></script>
+</head>
+<body>
+
+<h1>6 Degrees of Venmo</h1>
+<input id="username-box" placeholder="Input a Venmo user name" />
+<input type="button" id="submit-username">
+</body>
+</html>

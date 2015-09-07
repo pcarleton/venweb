@@ -1,4 +1,4 @@
-define(["scripts/lib/d3.js",
+define(["d3",
         "underscore",
         "jquery",
         "backbone",

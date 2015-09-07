@@ -3,14 +3,17 @@ define(["underscore",
         "backbone",
         "graph"],
 function(_, $, Backbone) {
+   var AJAX_CONCURRENCY = 2;
    var GraphModel = Backbone.Model.extend({
    defaults: {
     nodes: [],
     transactions: [],
     indLinks: [],
+    degree: 0,
     },
     initialize: function(options) {
         Backbone.Model.prototype.initialize.call(this, options);
+        this.runningRequests = 0;
         _.bindAll(this, 'namesForLink', "nodesFromTransactions")
     },
     fetchGraph: function(name) {
@@ -32,6 +35,8 @@ function(_, $, Backbone) {
             this.set({
                 "transactions": data,
             });
+
+            this.set("degree", 1);
 
             this.set("edgeQueue",
                 _.difference(_.pluck(transNodes, "name"),
@@ -65,18 +70,34 @@ function(_, $, Backbone) {
     },
     expandEdges: function() {
 
-        var edgesToExpand = this.get("edgeQueue");
-        console.log(edgesToExpand);
-        _.each(edgesToExpand, this.expandName, this);
+        this.expanding = _.clone(this.get("edgeQueue"));
+
+        while (this.runningRequests < AJAX_CONCURRENCY) {
+            this.runningRequests++;
+            this.expandNext();
+        }
+
     },
 
-    expandName: function(name) {
-        console.log("Expanding "+ name);
+    expandNext: function() {
+        if (this.expanding.length > 0) {
+            this.expandName(this.expanding.pop(),
+                            _.bind(this.expandNext, this))
+        } else {
+            this.runningRequests--;
+            if (!this.isFetching()) {
+                this.set("degree", this.get("degree") + 1);
+            }
+        }
+    },
 
+    isFetching: function() {
+        return this.expanding && this.expanding.length > 0;
+    },
+
+    expandName: function(name, cb) {
+        this.runningRequests++;
         $.get("/nodes/" + name, _.bind(function(data) {
-            console.log("Got data for : " + name);
-
-
             var transNodes = this.nodesFromTransactions(data);
 
             this.set({
@@ -107,6 +128,9 @@ function(_, $, Backbone) {
             });
 
             this.set("edgeQueue", _.clone(startingEdgeQueue));
+        }, this)).always(_.bind(function() {
+            this.runningRequests--;
+            cb();
         }, this));
     }
    });

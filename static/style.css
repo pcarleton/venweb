@@ -138,3 +138,9 @@ dt {
   stroke: #999;
   stroke-width: 1px;
 }
+
+.help {
+    padding-top: 13px;
+    font-size: 9pt;
+    width: 300px;
+}

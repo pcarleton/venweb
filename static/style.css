@@ -21,7 +21,6 @@ input {
 .container-1{
   width: 300px;
   vertical-align: middle;
-  white-space: nowrap;
 }
 
 search-container {
@@ -143,4 +142,5 @@ dt {
     padding-top: 13px;
     font-size: 9pt;
     width: 300px;
+    overflow: wrap;
 }

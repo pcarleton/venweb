@@ -67,9 +67,13 @@ picOfClass cls = deep (hasName "img")
 userLink :: Int -> IOSArrow XmlTree (String, String)
 userLink n = deep (hasAttrValue "class" (startswith "paymentpage-subline"))
     >>> nthLink n
-    
+
+-- inspired by http://stackoverflow.com/questions/17798417/hxt-select-a-node-by-position-with-hxt-in-haskell
+junction :: ArrowList a => a b c -> Int -> a b c
+junction a nth = a >>. (take 1 . drop nth)
+
 nthLink :: Int -> IOSArrow XmlTree (String, String)
-nthLink n = css "a" >. (!! n) >>>  getAttrValue "href" &&& deep getText 
+nthLink n = css "a" `junction` n  >>>  getAttrValue "href" &&& deep getText
 
 description :: IOSArrow XmlTree Description
 description = deep (hasAttrValue "class" (startswith "paymentpage-text "))

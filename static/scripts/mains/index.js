@@ -52,8 +52,6 @@ require(
 
             setupListeners();
 
-
-
             $(".warning").html(warnTemplate);
             $(".warning").toggle();
         }
@@ -72,6 +70,12 @@ require(
                 }
             });
         }
+
+        var toggleHelp = function() {
+            $(".help").toggle();
+        };
+
+        document.getElementById("uname-question").onclick = toggleHelp;
 
         setupListeners();
 });

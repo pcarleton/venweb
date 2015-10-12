@@ -138,11 +138,19 @@ dt {
   stroke-width: 1px;
 }
 
+.expando, .expando > a {
+    text-decoration: none;
+    color: rgb(61, 149, 206);
+    font-weight: bold;
+}
+
 .help {
+    display: none;
     padding-top: 13px;
-    font-size: 9pt;
+    font-size: 12pt;
     width: 300px;
     overflow: wrap;
+    margin-bottom: 10px;
 }
 
 .warning {

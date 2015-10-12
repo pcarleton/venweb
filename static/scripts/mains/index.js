@@ -41,6 +41,7 @@ require(
         };
 
         var validate = function() {
+            ga('send', 'event', 'Username', 'validate', 'validate');
             storeUserName();
             hideWarning();
             $(".search-container").html(verifyTemplate);
@@ -48,6 +49,7 @@ require(
         }
 
         var showError = function() {
+            ga('send', 'event', 'Username', 'validate', 'error');
             $(".search-container").html(searchDefaultTemplate);
             $("#username-box").val(userName);
 
@@ -73,6 +75,7 @@ require(
         }
 
         var toggleHelp = function() {
+            ga('send', 'event', 'Help', 'toggle', 'toggle');
             $(".help").toggle();
         };
 

@@ -22,4 +22,7 @@ executable scraper-hs
                       http-conduit >= 2.1.5,
                       containers,
                       parallel-io >= 0.3,
-                      bytestring >= 0.10
+                      bytestring >= 0.10,
+                      http-types >= 0.8.5,
+                      data-default >= 0.5,
+                      network >= 2.6.0.2

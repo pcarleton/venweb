@@ -4,8 +4,13 @@ import Text.XML.HXT.Core
 import qualified Network.HTTP.Conduit as C
 import Data.Tree.NTree.TypeDefs
 import qualified Data.ByteString.Lazy as L
+import qualified Data.Text.Lazy as LT
 import Data.Char (chr)
 import Data.List (isPrefixOf)
+
+import Network.HTTP.Types.Status (Status(..))
+import Data.Default (def)
+import Network (withSocketsDo)
 
 import GHC.Generics
 
@@ -109,6 +114,26 @@ transactionsForUser uname = do
     transactionTupes <- runX . transactionArrow $ pageTree
     return $ map extractTransaction transactionTupes
 
+checkStatus200 st@(Status sc _) rh cj =
+    if (200 <= sc && sc < 300) || sc == 404
+        then Nothing
+        else (C.checkStatus def) st rh cj
+
+-- | Download a HTTP link, returning @Nothing@ on 404 status code
+downloadCatch404 :: String
+                 -> IO LT.Text
+downloadCatch404 url = withSocketsDo $ do
+    request <- C.parseUrl url
+    let request' = request { C.checkStatus = checkStatus200 }
+    res <- C.withManager $ C.httpLbs request'
+    let status =  statusCode . C.responseStatus $ res
+    -- Return Nothing if status code == 404
+    return $ if status == 404
+        then "missing"
+        else "present"
+
+
+
 main :: IO ()
 main = do
   env <- getEnvironment
@@ -119,6 +144,10 @@ main = do
       uname <- param "username"
       transactions <- liftIO $ transactionsForUser uname
       json transactions
+    get "/ping/:username" $ do
+        uname <- param "username"
+        msg <- liftIO $ downloadCatch404 ("https://venmo.com/" ++ uname)
+        text msg
     get (regex "/graph/.*") $ file "fdg.html"
     get "/faq" $ file "faq.html"
     get "/" $ file "index.html"

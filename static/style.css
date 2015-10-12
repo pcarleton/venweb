@@ -142,6 +142,7 @@ dt {
     text-decoration: none;
     color: rgb(61, 149, 206);
     font-weight: bold;
+    margin-bottom: 0px;
 }
 
 .help {

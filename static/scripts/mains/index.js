@@ -42,6 +42,7 @@ require(
 
         var validate = function() {
             storeUserName();
+            hideWarning();
             $(".search-container").html(verifyTemplate);
             checkUsername();
         }

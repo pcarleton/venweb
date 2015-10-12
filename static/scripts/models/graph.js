@@ -10,6 +10,8 @@ function(_, $, Backbone) {
     transactions: [],
     indLinks: [],
     degree: 0,
+    cancelled: false,
+    readyToFetch: false,
     },
     initialize: function(options) {
         Backbone.Model.prototype.initialize.call(this, options);
@@ -43,6 +45,8 @@ function(_, $, Backbone) {
                              [this.get('root').name]));
 
             this.set("nodes", _.union(transNodes, this.get("nodes")));
+
+            this.set("readyToFetch", true);
         }, this), "json")
         .fail(function() {
             $("#container").html("Sorry! There was a problem getting data for the username: " +
@@ -77,10 +81,15 @@ function(_, $, Backbone) {
         return {"source": nodes[l.source].name, "target": nodes[l.target].name};
     },
     expandEdges: function() {
+        this.set("readyToFetch", false);
 
         this.expanding = _.clone(this.get("edgeQueue"));
 
         while (this.runningRequests < AJAX_CONCURRENCY) {
+            if (this.get("cancelled")) {
+                break;
+            }
+
             this.runningRequests++;
             this.expandNext();
         }
@@ -95,6 +104,7 @@ function(_, $, Backbone) {
             this.runningRequests--;
             if (this.runningRequests == 0 && !this.isFetching()) {
                 this.set("degree", this.get("degree") + 1);
+                this.set("readyToFetch", true);
             }
         }
     },

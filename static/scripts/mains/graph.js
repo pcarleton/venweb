@@ -14,5 +14,24 @@ require(
 
         window.graphModel = graphModel;
         window.graphView = graphView;
+
+        var autoExpand = function() {
+            if ((graphModel.get("degree") >= 6) || graphModel.get("cancelled")) {
+                cancelExpand();
+                return;
+            }
+            if (!graphModel.get("readyToFetch")) {
+                return;
+            }
+            if (!graphModel.isFetching() && graphModel.get("degree") >= 1) {
+                edgeListView.expandAll();
+            }
+        }
+
+        var interval = setInterval(autoExpand, 1000);
+
+        var cancelExpand = function() {
+            clearInterval(interval);
+        }
 });
 

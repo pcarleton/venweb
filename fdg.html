@@ -23,6 +23,7 @@ var require = {
         jquery: '/scripts/lib/jquery',
         backbone: '/scripts/lib/backbone',
         d3: '/scripts/lib/d3',
+        text:   "/scripts/lib/text",
     },
     shim: {
         "underscore": {
@@ -40,7 +41,7 @@ var require = {
 <body>
 <div class="vbox">
 <div class="fbox" id="edge-list">
-    <div><input class="expand-all-button" type="button" value="Expand"></div>
+    <div class="control" ><input class="expand-all-button" type="button" value="Expand"></div>
     <div>Degree: <span id="degree-span">0</span></div>
     <div>People: <span id="node-count-span">1</span></div>
     <div><span><a href="/">Start Over</a></span></div>

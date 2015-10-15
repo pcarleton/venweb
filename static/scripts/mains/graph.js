@@ -16,7 +16,7 @@ require(
         window.graphView = graphView;
 
         var autoExpand = function() {
-            if ((graphModel.get("degree") >= 6) || graphModel.get("cancelled")) {
+            if ((graphModel.get("degree") >= 3) || graphModel.get("cancelled")) {
                 cancelExpand();
                 return;
             }

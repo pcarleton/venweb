@@ -28,8 +28,6 @@ If you want to deploy our very own Haskell app, I suggest following @mietek's tu
 
 ### Why Haskell?
 
-The app could be rewritten without a backend by parsing all the pages in javascript, so why go to all the trouble of writing a Haskell backend?  I wanted to know if I could do it.
-
 This project started out as a way for me to try Haskell in a (quasi) practical setting.  Previously, I had used Haskell for programming problems.  I really loved the functional style (it was punishing at first, but it grew on me), but I had never deployed anything with it.
 
 I took inspiration from this blog post: http://adit.io/posts/2012-03-10-building_a_concurrent_web_scraper_with_haskell.html.  An initial version of would concurrently traverse the transaction graph to build up the network in a single backend request, but I took this behavior out in order to simplify the API.

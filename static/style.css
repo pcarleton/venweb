@@ -18,10 +18,6 @@ input {
   height: 50px;
 }
 
-.container-1{
-  width: 300px;
-  vertical-align: middle;
-}
 
 search-container {
     align-items: stretch;
@@ -87,6 +83,25 @@ search-container {
     min-width: 300px;
 }
 
+.logo {
+    flex: 1;
+}
+
+.inner-vbox {
+    display: flex;
+    display:-webkit-flex;
+    flex-direction: column;
+    -webkit-flex-direction: column;
+}
+
+.align-end {
+    justify-content: flex-end;
+}
+
+.tutorial {
+    flex: 1;
+}
+
 .vbox > div {
 
 }
@@ -95,7 +110,7 @@ search-container {
     height: auto;
     min-height: 300px;
     margin: 2px;
-    flex: 2;
+    flex: 5;
     -webkit-flex: 5;
 }
 
@@ -118,8 +133,16 @@ dt {
     overflow: wrap;
 }
 
+
+
 .footer {
     margin-bottom: 30px;
+}
+
+@media screen and (device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) {
+    .footer {
+        margin-bottom: 60px;
+    }
 }
 
 .node {

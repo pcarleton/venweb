@@ -76,7 +76,7 @@ require(
 
         var toggleHelp = function() {
             ga('send', 'event', 'Help', 'toggle', 'toggle');
-            $(".help").toggle();
+            $(".tutbox").toggle();
         };
 
         document.getElementById("uname-question").onclick = toggleHelp;

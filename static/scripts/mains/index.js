@@ -56,11 +56,11 @@ require(
             setupListeners();
 
             $(".warning").html(warnTemplate);
-            $(".warning").toggle();
+            $(".warning").removeClass("hidden");
         }
 
         var hideWarning = function() {
-            $(".warning").slideUp();
+            $(".warning").addClass("hidden");
         }
 
         var setupListeners = function() {
@@ -76,7 +76,15 @@ require(
 
         var toggleHelp = function() {
             ga('send', 'event', 'Help', 'toggle', 'toggle');
-            $(".tutbox").toggle();
+            var mark = $("#marker").html();
+            if (mark == "+") {
+                $("#marker").html("-");
+                $(".tutbox").removeClass("hidden");
+            } else {
+                $("#marker").html("+");
+                $(".tutbox").addClass("hidden");
+            }
+
         };
 
         document.getElementById("uname-question").onclick = toggleHelp;

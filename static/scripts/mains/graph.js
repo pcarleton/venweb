@@ -32,6 +32,7 @@ require(
 
         var cancelExpand = function() {
             clearInterval(interval);
+            edgeListView.cancel();
         }
 });
 

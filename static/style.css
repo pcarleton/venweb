@@ -168,8 +168,9 @@ dt {
     margin-bottom: 0px;
 }
 
+
+
 .help {
-    display: none;
     padding-top: 13px;
     font-size: 12pt;
     width: 300px;
@@ -177,16 +178,27 @@ dt {
     margin-bottom: 10px;
 }
 
+
+
 .warning {
-    display: none;
+    display: flex;
+    font-size: 12pt;
     color: maroon;
+    margin-bottom: 10px;
 }
 
 .control {
     font-size: 9pt;
 }
 
+.column {
+    width: 300px;
+}
 
+
+.hidden {
+    display: none;
+}
 
 /* // Spinners from:
 http://www.css-spinners.com/css/spinner/throbber.css */

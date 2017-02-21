@@ -1,6 +1,8 @@
 6 Degrees of Venmo
 ==========
 
+![Venweb demo gif](https://s3-us-west-1.amazonaws.com/carleton-images/venweb-zoom.gif)
+
 This project pulls data from public Venmo transactions into a force directed graph for the user to explore and play with.
 
 The server side of the app is written in Haskell and deployed to Heroku.  A huge thanks is in order for @mietek.  Without [halycon](https://halcyon.sh/) and his [Haskell on Heroku](https://github.com/mietek/haskell-on-heroku) I am not sure if I would have ever gotten this deployed.

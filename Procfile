@@ -1,1 +1,1 @@
-web: bin/scraper-hs
+web: bin/venweb

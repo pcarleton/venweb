@@ -19,10 +19,10 @@ $ eval "$( curl -sL https://github.com/mietek/halcyon/raw/master/setup.sh )"
 
 Next, install the app with:
 ```sh
-$ halcyon install https://github.com/pcarleton/scraper-hs
+$ halcyon install https://github.com/pcarleton/venweb
 ```
 
-You should then be able to run the app by calling `scraper-hs` from the command line.
+You should then be able to run the app by calling `venweb` from the command line.
 
 If you want to deploy our very own Haskell app, I suggest following @mietek's tutorial.
 
@@ -30,4 +30,4 @@ If you want to deploy our very own Haskell app, I suggest following @mietek's tu
 
 This project started out as a way for me to try Haskell in a (quasi) practical setting.  Previously, I had used Haskell for programming problems.  I really loved the functional style (it was punishing at first, but it grew on me), but I had never deployed anything with it.
 
-I took inspiration from this blog post: http://adit.io/posts/2012-03-10-building_a_concurrent_web_scraper_with_haskell.html.  An initial version of would concurrently traverse the transaction graph to build up the network in a single backend request, but I took this behavior out in order to simplify the API.
+I took inspiration from this blog post: http://adit.io/posts/2012-03-10-building_a_concurrent_web_scraper_with_haskell.html.  An initial version concurrently traversed the transaction graph to build up the network in a single backend request, but I took this behavior out in order to simplify the API.

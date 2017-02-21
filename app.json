@@ -2,7 +2,7 @@
   "name": "venweb",
   "description": "Web of public payments from venmo.com",
   "logo": "https://halcyon.sh/logo.svg",
-  "repository": "https://github.com/pcarleton/scraper-hs",
+  "repository": "https://github.com/pcarleton/venweb",
   "env": {
     "BUILDPACK_URL": {
       "description": "Heroku buildpack for deploying Haskell apps",
